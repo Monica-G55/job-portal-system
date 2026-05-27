@@ -15,15 +15,11 @@ class AccountController extends Controller
         return view('front.account.register');
     }
 
-
     public function loginIndex()
     {
         return view('front.account.login');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function registeration(Request $request)
     {
        $validatator = Validator::make($request->all(),[
@@ -53,13 +49,8 @@ class AccountController extends Controller
                 'errors'=>$validatator->errors()
            ]);
         }
-
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(),[
@@ -80,12 +71,53 @@ class AccountController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function profile()
     {
-        echo 'Profile page';
+        $id = Auth::user()->id;
+        
+        $user = User::where('id',$id)->first();
+
+        return view('front.account.profile',compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $id = Auth::user()->id;
+
+        $validator = Validator::make($request->all(),[
+            'name'=>'required',
+            'email'=>'required|email|unique:users,email,'.$id.',id'
+        ]);
+
+        if($validator->passes()){
+            
+              $user = User::find($id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->designation = $request->designation;
+            $user->mobile = $request->mobile;
+             $user->save();
+
+            session()->flash('success','Profile Updated Successfully');
+
+            return response()->json([
+                'status'=>true,
+                 'errors'=>[]
+            ]);
+        }else{
+        return response()->json([
+            'status'=>false,
+            'errors'=>$validator->errors()
+        ]);
+
+        }
+        
+
+    }
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('account.login');
     }
 
     /**
