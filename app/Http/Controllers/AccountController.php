@@ -110,14 +110,16 @@ class AccountController extends Controller
             'errors'=>$validator->errors()
         ]);
 
-        }
-        
+        }      
 
     }
     public function logout()
     {
         Auth::logout();
         return redirect()->route('account.login');
+    }
+
+    public function updateProfilePic(Request $request){
     }
 
     /**

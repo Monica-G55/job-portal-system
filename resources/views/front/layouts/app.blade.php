@@ -48,7 +48,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form id="profilepic" method="post">
+			@csrf
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Profile Image</label>
                 <input type="file" class="form-control" id="image"  name="image">
@@ -77,5 +78,26 @@
 <script src="{{asset('assets/js/slick.min.js')}}"></script>
 <script src="{{asset('assets/js/lightbox.min.js')}}"></script>
 @yield('customJs')
+<script>
+    $("#profilepic").submit(function(e){
+		e.preventDefault();
+
+		var formData = new FormData(this);
+
+		$.ajax({
+			url:"{{route('account.updateProfilePic')}}",
+			type:'post',
+			dataType:'json',
+			data:formData,
+			contentType:false,
+			processData:false,
+			success:function(response){
+				
+			}
+
+		});
+	});
+</script>
+
 </body>
 </html>
