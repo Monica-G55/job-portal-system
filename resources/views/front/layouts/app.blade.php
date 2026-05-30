@@ -53,6 +53,7 @@
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Profile Image</label>
                 <input type="file" class="form-control" id="image"  name="image">
+				<p id="image-error" class="text-danger"></p>
             </div>
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary mx-3">Update</button>
@@ -92,7 +93,14 @@
 			contentType:false,
 			processData:false,
 			success:function(response){
-				
+				if(response.status == false){
+					var errors = response.errors;
+					if(errors.image){
+						$('#image-error').html(errors.image)
+					}
+				}else{
+					window.location.href = '{{ url()->current() }}';
+				}
 			}
 
 		});
