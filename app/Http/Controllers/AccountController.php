@@ -180,6 +180,7 @@ class AccountController extends Controller
            'title'=>$request->title,
            'category_id'=>$request->category,
            'job_types_id'=>$request->jobtype,
+          'user_id'=> Auth::user()->id,
            'salary'=>$request->salary,
            'vacancy'=>$request->vacancy,
            'description'=>$request->description,
@@ -210,8 +211,10 @@ class AccountController extends Controller
    }
 
    public function myJob(){
-    
-       return view('front.account.job.my-jobs');
+
+      $jobs = Job::where('user_id',Auth::user()->id)->with('jobType')->paginate(10);
+
+       return view('front.account.job.my-jobs',compact('jobs'));
    }
 
     /**
