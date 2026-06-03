@@ -38,6 +38,7 @@ Route::group(['prefix'=>'account'],function(){
             Route::get('/my-jobs',[AccountController::class,'myJob'])->name('account.myjob');
             Route::get('/my-jobs/edit-jobs/{jobId}',[AccountController::class,'editJob'])->name('account.editJob');
             Route::put('/my-jobs/update-jobs/{jobId}',[AccountController::class,'updateJob'])->name('account.updateJob');
+            Route::delete('/my-jobs/delete-jobs/{jobId}',[AccountController::class,'deleteJob'])->name('account.deleteJob');
             Route::post('/update-profile',[AccountController::class,'updateProfilePic'])->name('account.updateProfilePic');
             Route::put('/update-profile',[AccountController::class,'updateProfile'])->name('account.updateProfile');
             Route::get('/logout',[AccountController::class,'logout'])->name('account.logout');

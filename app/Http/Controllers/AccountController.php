@@ -281,4 +281,16 @@ class AccountController extends Controller
 
         return view('front.account.job.edit',compact('categories','jobtypes','job'));
     }
+
+    public function deleteJob(Job $jobId){
+
+         $jobId->delete();
+
+         session()->flash('success','Job deleted successfully');
+
+         return response()->json([
+            'status'=> true,
+            'message'=>'Deleted successfully'
+         ]);
+    }
 }

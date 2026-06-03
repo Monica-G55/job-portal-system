@@ -69,7 +69,7 @@
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li><a class="dropdown-item" href="job-detail.html"> <i class="fa fa-eye" aria-hidden="true"></i> View</a></li>
                                                     <li><a class="dropdown-item" href="{{route('account.editJob',$job->id)}}"><i class="fa fa-edit" aria-hidden="true"></i> Edit</a></li>
-                                                    <li><a class="dropdown-item" href="#"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="deleteJob('{{ $job->id }}')"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -89,5 +89,28 @@
                 </div>
             </div>
 </section>
+
+@endsection
+
+@section('customJs')
+     
+<script>
+    function deleteJob(jobId){
+        if(confirm('Are you sure delete')){
+         $.ajax({
+          url:'/account/my-jobs/delete-jobs/'+jobId,
+          type:'delete',
+            data: {
+            jobId:jobId,
+            _token: "{{ csrf_token() }}"
+        },
+          dataType:'json',
+          success:function(response){
+           window.location.href="{{route('account.myjob')}}"
+          }
+         });
+         };
+    }
+</script>
 
 @endsection
