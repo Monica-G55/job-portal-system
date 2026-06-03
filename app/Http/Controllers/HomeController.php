@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Job;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -11,7 +13,25 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('front.home');
+        $categories= Category::where('status',1)
+                    ->orderBy('name','ASC')
+                    ->take(8)
+                    ->get();
+
+        $featuredjobs=Job::where('status',1)
+                     ->where('isfeatured',1)
+                     ->with('jobType')
+                     ->orderBy('created_at','DESC')
+                     ->take(6)
+                     ->get();
+        
+        $latestjobs=Job::where('status',1)
+                     ->orderBy('created_at','DESC')
+                    ->with('jobType')
+                     ->take(6)
+                     ->get();
+
+        return view('front.home',compact('categories','featuredjobs','latestjobs'));
     }
 
     /**
