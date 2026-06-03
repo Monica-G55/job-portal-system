@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Job;
+use App\Models\JobType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -150,21 +153,66 @@ class AccountController extends Controller
          }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function createJob()
     {
-        //
+        $categories = Category::orderBy('name','ASC')->where('status',1)->get();
+        $jobtypes = JobType::orderBy('name','ASC')->where('status',1)->get();
+
+        return view('front.account.job.create',compact('categories','jobtypes'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    
+   public function saveJob(Request $request){
+    
+      $validator = Validator::make($request->all(),[
+        'title'=>'required|min:5|max:200',
+        'category'=>'required',
+        'jobtype'=>'required',
+        'vacancy'=>'required|integer',
+        'location'=>'required|max:50',
+        'description'=>'required',
+        'company_name'=>'required|min:3|max:75'
+
+      ]);
+
+      if($validator->passes()){
+        Job::create([
+           'title'=>$request->title,
+           'category_id'=>$request->category,
+           'job_types_id'=>$request->jobtype,
+           'salary'=>$request->salary,
+           'vacancy'=>$request->vacancy,
+           'description'=>$request->description,
+           'location'=>$request->location,
+           'benefits'=>$request->benefits,
+           'qualifications'=>$request->qualifications,
+           'keywords'=>$request->keywords,
+           'responsibility'=>$request->responsibility,
+           'experience'=>$request->experience,
+           'company_name'=>$request->company_name,
+           'company_location'=>$request->company_location,
+           'company_website'=>$request->company_website,
+        ]);
+
+        session()->flash('success','Job added successfully');
+
+        return response()->json([
+           'status'=>true,
+           'errors'=>[]
+        ]);
+         
+      }else{
+        return response()->json([
+           'status'=>false,
+           'errors'=>$validator->errors() 
+        ]);
+      }
+   }
+
+   public function myJob(){
+    
+       return view('front.account.job.my-jobs');
+   }
 
     /**
      * Remove the specified resource from storage.
