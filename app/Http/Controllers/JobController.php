@@ -49,4 +49,18 @@ class JobController extends Controller
 
         return view('front.jobs',compact('categories','jobtypes','jobs','jobTypeArray'));
     }
+
+    public function detail($id){
+
+    $jobs = Job::where([
+          'id'=>$id,
+          'status'=>1
+    ])->with(['jobType','category'])->first();
+
+    if($jobs==null){
+        abort(404);
+    }
+
+    return view('front.jobdetails',compact('jobs'));
+    }
 }
