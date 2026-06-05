@@ -93,6 +93,7 @@
 			contentType:false,
 			processData:false,
 			success:function(response){
+				
 				if(response.status == false){
 					var errors = response.errors;
 					if(errors.image){
