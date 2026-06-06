@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Job;
+use App\Models\JobApplication;
 use App\Models\JobType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
@@ -62,5 +64,47 @@ class JobController extends Controller
     }
 
     return view('front.jobdetails',compact('jobs'));
+    }
+
+    public function applyJob(Request $request){
+        
+        $id = $request->id;
+
+        $job = Job::where('id',$id)->first();
+
+        if($job == null){
+
+            session()->flash('error','Job doesnot exist');
+
+            return response()->json([
+                'status'=>false,
+                'message'=>'job doesnot exist'
+            ]);
+        }
+
+        $employer_id = $job->user_id;
+
+        if($employer_id == Auth::user()->id){
+            session()->flash('error','You cannot Apply on your Own Job');
+
+            return response()->json([
+               'status'=>false,
+               'message'=>'You cannot Apply on your Own Job' 
+            ]);
+        }
+
+        JobApplication::create([
+          'job_id'=>$id,
+          'user_id'=>Auth::user()->id,
+          'employeer_id'=>$employer_id,
+          'applied_dates'=>now(),
+        ]);
+
+        session()->flash('success','You have successfully applied');
+
+        return response()->json([
+          'status'=>true,
+          'message'=>'You can not applying on your Job'
+        ]);
     }
 }
