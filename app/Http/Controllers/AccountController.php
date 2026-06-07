@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Job;
+use App\Models\JobApplication;
 use App\Models\JobType;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -295,5 +296,11 @@ class AccountController extends Controller
             'status'=> true,
             'message'=>'Deleted successfully'
          ]);
+    }
+
+    public function myJobApplications(){
+
+       $jobs = JobApplication::where('user_id',Auth::user()->id)->get();
+        return view('front.account.job.my-job-applications',compact('jobs'));
     }
 }

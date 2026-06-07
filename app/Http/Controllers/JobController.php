@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\JobNotificationEmail;
 use App\Models\Category;
 use App\Models\Job;
 use App\Models\JobApplication;
 use App\Models\JobType;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class JobController extends Controller
 {
@@ -78,7 +81,7 @@ class JobController extends Controller
 
             return response()->json([
                 'status'=>false,
-                'message'=>'job doesnot exist'
+                'error'=>'job doesnot exist'
             ]);
         }
 
@@ -89,22 +92,47 @@ class JobController extends Controller
 
             return response()->json([
                'status'=>false,
-               'message'=>'You cannot Apply on your Own Job' 
+               'error'=>'You cannot Apply on your Own Job' 
             ]);
+        }
+
+        $jobApplicationCount = JobApplication::where([
+           'user_id'=>Auth::user()->id,
+           'job_id'=>$id
+        ])->count();
+
+        if($jobApplicationCount > 0){
+
+            session()->flash('error','You have already applied for this job');
+
+            return response()->json([
+               'status'=>false,
+               'error'=>'You have already applied for this job' 
+            ]);
+
         }
 
         JobApplication::create([
           'job_id'=>$id,
           'user_id'=>Auth::user()->id,
-          'employeer_id'=>$employer_id,
+          'employer_id'=>$employer_id,
           'applied_dates'=>now(),
         ]);
+        $employer = User::where('id',$employer_id)->first();
+
+        $mailData=[
+            'employer'=>$employer,
+            'user'=>Auth::user(),
+            'job'=>$job
+        ];
+        
+        Mail::to($employer->email)->send(new JobNotificationEmail($mailData));
 
         session()->flash('success','You have successfully applied');
 
         return response()->json([
           'status'=>true,
-          'message'=>'You can not applying on your Job'
+          'success'=>'You have successfully applied'
         ]);
     }
 }
