@@ -28,16 +28,18 @@
                 <div class="col-md-3 mb-3 mb-sm-3 mb-lg-0">
                     <select name="category" id="category" class="form-control">
                         <option value="">Select a Category</option>
-                        <option value="">Engineering</option>
-                        <option value="">Accountant</option>
-                        <option value="">Information Technology</option>
-                        <option value="">Fashion designing</option>
+                        @if($searchcategories->isNotEmpty())
+                          @foreach($searchcategories as $category)
+                           <option value="{{$category->id}}">{{$category->name}}</option>
+                          @endforeach
+                        @endif
                     </select>
                 </div>
                 
                 <div class=" col-md-3 mb-xs-3 mb-sm-3 mb-lg-0">
                     <div class="d-grid gap-2">
-                        <a href="jobs.html" class="btn btn-primary btn-block">Search</a>
+                        <!-- <a href="jobs.html" class="btn btn-primary btn-block">Search</a> -->
+                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>
                     
                 </div>
@@ -54,7 +56,7 @@
             @foreach($categories as $category)
             <div class="col-lg-4 col-xl-3 col-md-6">
                 <div class="single_catagory">
-                    <a href="jobs.html"><h4 class="pb-2">{{$category->name}}</h4></a>
+                    <a href="{{route('jobs').'?category='.$category->id}}"><h4 class="pb-2">{{$category->name}}</h4></a>
                     <p class="mb-0"> <span>0</span> Available position</p>
                 </div>
             </div>
