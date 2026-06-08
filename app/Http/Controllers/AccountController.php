@@ -143,7 +143,7 @@ class AccountController extends Controller
 
             return response()->json([
                'status'=>true,
-               'erros'=>[]
+               'errors'=>[]
             ]);
 
          }else{
@@ -300,7 +300,30 @@ class AccountController extends Controller
 
     public function myJobApplications(){
 
-       $jobs = JobApplication::where('user_id',Auth::user()->id)->get();
+       $jobs = JobApplication::where('user_id',Auth::user()->id)->with(['job','job.jobType','job.applications'])->paginate(10);
         return view('front.account.job.my-job-applications',compact('jobs'));
+    }
+
+    public function removeJob(Request $request){
+        $jobs = JobApplication::where([
+           'id'=>$request->id,
+           'user_id'=> Auth::user()->id]
+           )->first();
+
+        if($jobs == null){
+            session()->flash('error','Job application not found');
+
+            return response()->json([
+               'status'=> false
+            ]);
+        }
+
+        JobApplication::find($request->id)->delete();
+
+        session()->flash('success','Job Application removed successfully');
+            return response()->json([
+              'status'=>true,
+              'errors'=>[]
+            ]);
     }
 }
